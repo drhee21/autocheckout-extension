@@ -1,5 +1,5 @@
 # autocheckout-extension
-Automate the online shopping process with a single click
+Automate the online shopping process with a single click.
 
 
 ## Disclaimer
