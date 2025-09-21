@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Autocheckout Extension",
+  "version": "1.0.0",
+  "description": "Automate the online shopping process with a single click.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*products*"],
+      "js": ["content.js"]
+    }
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
