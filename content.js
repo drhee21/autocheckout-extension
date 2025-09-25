@@ -30,7 +30,7 @@
 function createButton() {
     // Create the AUTOCHECKOUT button
     const button = document.createElement('button');
-    button.textContent = 'AUTOCHECKOUT';
+    button.textContent = 'BUY NOW';
     button.style.position = 'fixed';
     button.style.right = '20px';
     button.style.bottom = '20px';
@@ -49,7 +49,7 @@ function createButton() {
     // Button click handler
     button.addEventListener('click', () => {
         // Update button text to show loading state
-        button.textContent = 'Adding to cart...';
+        button.textContent = 'ADDING TO CART...';
         button.disabled = true;
         
         chrome.storage.local.get(['address1', 'address2', 'city', 'state', 'country', 'postal', 'email', 'phone'], (result) => {
@@ -111,8 +111,7 @@ function createButton() {
             fetch(graphqlEndpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Shopify-Storefront-Access-Token': '' // TODO: Add storefront access token
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     query: mutation,
@@ -157,7 +156,7 @@ function createButton() {
                     };
                     
                     // Update button text for buyer identity update
-                    button.textContent = 'Submitting information...';
+                    button.textContent = 'SUBMITTING INFO...';
                     
                     // Update buyer identity
                     fetch(graphqlEndpoint, {
@@ -172,48 +171,19 @@ function createButton() {
                         })
                     })
                     .then(response => response.json())
-                    .then(identityData => {
-                        if (identityData.data && identityData.data.cartBuyerIdentityUpdate && identityData.data.cartBuyerIdentityUpdate.cart) {
-                            // Redirect to checkout after successful identity update
-                            const checkoutUrl = data.data.cartCreate.cart.checkoutUrl;
-                            if (checkoutUrl) {
-                                window.location.href = checkoutUrl;
-                            }
-                        } else if (identityData.data && identityData.data.cartBuyerIdentityUpdate && identityData.data.cartBuyerIdentityUpdate.userErrors) {
-                            // Still redirect to checkout even if identity update fails
-                            const checkoutUrl = data.data.cartCreate.cart.checkoutUrl;
-                            if (checkoutUrl) {
-                                window.location.href = checkoutUrl;
-                            }
-                        } else {
-                            // Still redirect to checkout
-                            const checkoutUrl = data.data.cartCreate.cart.checkoutUrl;
-                            if (checkoutUrl) {
-                                window.location.href = checkoutUrl;
-                            }
-                        }
-                    })
-                    .catch(identityError => {
-                        // Still redirect to checkout even if identity update fails
+                    .finally(() => {
+                        // Redirect to checkout regardless of buyer identity update result
                         const checkoutUrl = data.data.cartCreate.cart.checkoutUrl;
                         if (checkoutUrl) {
                             window.location.href = checkoutUrl;
                         }
                     });
                     
-                } else if (data.data && data.data.cartCreate && data.data.cartCreate.userErrors) {
-                    // Reset button state on error
-                    button.textContent = 'AUTOCHECKOUT';
-                    button.disabled = false;
-                } else {
-                    // Reset button state on error
-                    button.textContent = 'AUTOCHECKOUT';
-                    button.disabled = false;
                 }
             })
             .catch(error => {
                 // Reset button state on error
-                button.textContent = 'AUTOCHECKOUT';
+                button.textContent = 'BUY NOW';
                 button.disabled = false;
             });
         });

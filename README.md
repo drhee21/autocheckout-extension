@@ -1,6 +1,16 @@
 # autocheckout-extension
 Automate the online shopping process with a single click.
 
+## Features
+
+✨ **One-Click Checkout**\
+Go from product page to payment instantly — no extra steps.
+
+📬 **Auto-Fill Without Accounts**\
+Securely save and auto-fill your email, phone, and address — no login required.
+
+🛍️ **Wide Store Compatibility**\
+Works seamlessly with all Shopify stores — with more platforms on the way!
 
 ## Disclaimer
 This project is provided as open-source software on an "as-is" basis.  
