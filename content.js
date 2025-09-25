@@ -162,15 +162,73 @@ function createButton() {
                     fetch(graphqlEndpoint, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-Shopify-Storefront-Access-Token': '' // TODO: Add storefront access token
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             query: buyerIdentityMutation,
                             variables: buyerIdentityVariables
                         })
                     })
-                    .then(response => response.json())
+					.then(response => response.json())
+					.then(buyerIdentityResponse => {
+						alert(JSON.stringify(buyerIdentityResponse));
+						return buyerIdentityResponse;
+					})
+					.then(() => {
+						// After buyer identity, add delivery address to cart
+						const addAddressMutation = `
+							mutation CartDeliveryAddressesAdd($id: ID!, $addresses: [CartSelectableAddressInput!]!) {
+								cartDeliveryAddressesAdd(cartId: $id, addresses: $addresses) {
+									cart { id }
+									userErrors { field message }
+									warnings { message }
+								}
+							}
+						`;
+
+						const addAddressVariables = {
+							id: cartId,
+							addresses: [
+								{
+									selected: true,
+									address: {
+										deliveryAddress: {
+											firstName: result.firstName || '',
+											lastName: result.lastName || '',
+											address1: result.address1 || '',
+											address2: result.address2 || null,
+											city: result.city || '',
+											provinceCode: result.state || '',
+											countryCode: result.country || '',
+											zip: result.postal || ''
+										}
+									}
+								}
+							]
+						};
+
+						return fetch(graphqlEndpoint, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({
+								query: addAddressMutation,
+								variables: addAddressVariables
+							})
+						})
+							.then(r => r.json())
+							.then(addAddressResponse => {
+								// Optional: surface any errors/warnings
+								if (addAddressResponse && addAddressResponse.data && addAddressResponse.data.cartDeliveryAddressesAdd) {
+									const errs = addAddressResponse.data.cartDeliveryAddressesAdd.userErrors || [];
+									if (errs.length) {
+										console.warn('cartDeliveryAddressesAdd errors:', errs);
+									}
+								}
+								return addAddressResponse;
+							});
+					})
                     .finally(() => {
                         // Redirect to checkout regardless of buyer identity update result
                         const checkoutUrl = data.data.cartCreate.cart.checkoutUrl;

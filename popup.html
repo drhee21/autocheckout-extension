@@ -22,6 +22,11 @@
             flex-direction: column;
             gap: 10px;
         }
+        .row { display: flex; gap: 8px; }
+        .field { flex: 1; }
+        .field.compact { flex: 0 0 90px; }
+        .field label { display: block; }
+        .field input, .field select { width: 100%; box-sizing: border-box; }
         label {
             font-size: 0.95em;
             margin-bottom: 2px;
@@ -57,23 +62,46 @@
 <body>
     <h2>User Profile</h2>
     <form id="addressForm">
+        <div class="row">
+            <div class="field">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="field">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+        </div>
+
         <label for="address1">Address Line 1</label>
         <input type="text" id="address1" name="address1" required>
 
         <label for="address2">Address Line 2</label>
         <input type="text" id="address2" name="address2">
 
-        <label for="city">City</label>
-        <input type="text" id="city" name="city" required>
-
-        <label for="state">State</label>
-        <input type="text" id="state" name="state" required>
+        <div class="row">
+            <div class="field">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div class="field compact">
+                <label for="state">State</label>
+                <select id="state" name="state" class="compact" required>
+                    <option value="" disabled selected>--</option>
+                </select>
+            </div>
+            <div class="field compact">
+                <label for="postal">Postal Code</label>
+                <input type="text" id="postal" name="postal" class="compact" required>
+            </div>
+        </div>
 
         <label for="country">Country</label>
-        <input type="text" id="country" name="country" required>
+        <select id="country" name="country" required>
+            <option value="" disabled selected>Select country</option>
+        </select>
 
-        <label for="postal">Postal Code</label>
-        <input type="text" id="postal" name="postal" required>
+        
 
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required>
